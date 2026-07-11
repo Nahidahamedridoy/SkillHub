@@ -4,6 +4,7 @@ import React from "react";
 import { Card, CardContent, CardFooter, Button, Chip } from "@heroui/react";
 import { LuStar, LuBookOpen, LuClock } from "react-icons/lu";
 import { Course } from "@/types/course";
+import Link from "next/link";
 
 interface CourseCardProps {
   course: Course;
@@ -17,20 +18,19 @@ export default function CourseCard({ course }: CourseCardProps) {
         {course.badge && (
           <Chip
             size="sm"
-            className={`absolute top-3 left-3 z-10 font-bold border-none ${
-              course.badge === "Bestseller"
+            className={`absolute top-3 left-3 z-10 font-bold border-none ${course.badge === "Bestseller"
                 ? "bg-amber-500 text-white"
                 : course.badge === "Hot"
-                ? "bg-rose-500 text-white"
-                : course.badge === "New"
-                ? "bg-blue-500 text-white"
-                : "bg-purple-500 text-white"
-            }`}
+                  ? "bg-rose-500 text-white"
+                  : course.badge === "New"
+                    ? "bg-blue-500 text-white"
+                    : "bg-purple-500 text-white"
+              }`}
           >
             {course.badge}
           </Chip>
         )}
-        
+
         {/* Course Image Container */}
         <div className="relative aspect-[16/10] overflow-hidden w-full bg-default-100">
           <img
@@ -89,13 +89,15 @@ export default function CourseCard({ course }: CourseCardProps) {
             {course.price}
           </span>
         </div>
-        <Button
-          size="sm"
-          variant="outline"
-          className="font-bold border-default-250 hover:border-primary hover:text-primary px-4 py-2 transition-all duration-300"
-        >
-          View Details
-        </Button>
+        <Link href={`/courses/${course.id}`}>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="font-bold border-default-250 hover:border-primary hover:text-primary px-4 py-2"
+          >
+            View Details
+          </Button>
+        </Link>
       </CardFooter>
     </Card>
   );
