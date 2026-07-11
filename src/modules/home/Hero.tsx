@@ -12,6 +12,7 @@ import {
   LuPlay,
   LuUsers,
 } from "react-icons/lu";
+import Link from "next/link";
 
 // Animation Variants
 const containerVariants = {
@@ -126,7 +127,7 @@ export default function Hero() {
                 size="lg"
                 className="w-full sm:w-auto bg-gradient-to-r from-primary to-secondary text-white font-semibold shadow-lg shadow-primary/20 hover:shadow-primary/30 hover:scale-[1.02] active:scale-[0.98] transition-all duration-350 px-8 py-6 rounded-xl flex items-center justify-center gap-2"
               >
-                <span>Explore Courses</span>
+                <Link href='/courses'><span>Explore Courses</span></Link>
                 <LuArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Button>
               <Button

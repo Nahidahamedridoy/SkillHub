@@ -22,7 +22,7 @@ const Logo = () => (
         <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" />
       </svg>
     </div>
-    <span className="text-xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground-800 bg-clip-text text-transparent">
+    <span className="text-xl font-bold tracking-tight text-foreground">
       Skill<span className="text-primary group-hover:text-secondary transition-colors duration-300">Hub</span>
     </span>
   </div>
