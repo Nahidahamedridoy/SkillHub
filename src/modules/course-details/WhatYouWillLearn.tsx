@@ -58,7 +58,7 @@ export default function WhatYouWillLearn({ course }: WhatYouWillLearnProps) {
       <Card className="border border-default-100/60 bg-background/50 backdrop-blur-md shadow-xl rounded-3xl p-6 sm:p-8">
         <CardHeader className="p-0 pb-6">
           <h2 className="text-2xl font-bold tracking-tight text-foreground">
-            What You'll Learn
+            What You&apos;ll Learn
           </h2>
         </CardHeader>
         <CardContent className="p-0">

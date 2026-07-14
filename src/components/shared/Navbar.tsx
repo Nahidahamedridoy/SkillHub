@@ -5,13 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Avatar, Button, Dropdown } from "@heroui/react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  LuLayoutDashboard,
-  LuBookOpen,
-  LuUser,
-  LuSettings,
-  LuLogOut,
-} from "react-icons/lu";
+import { LuUser, LuSettings, LuLogOut } from "react-icons/lu";
 
 import { useAuth } from "@/context/AuthContext";
 
@@ -71,9 +65,7 @@ interface UserMenuItem {
 }
 
 const userMenuItems: UserMenuItem[] = [
-  { id: "dashboard", label: "Dashboard", href: "/dashboard", icon: <LuLayoutDashboard size={16} /> },
-  { id: "my-courses", label: "My Courses", href: "/courses/my", icon: <LuBookOpen size={16} /> },
-  { id: "profile", label: "Profile", href: "/profile", icon: <LuUser size={16} /> },
+  { id: "profile", label: "My Profile", href: "/profile", icon: <LuUser size={16} /> },
   { id: "settings", label: "Settings", href: "/settings", icon: <LuSettings size={16} /> },
   { id: "logout", label: "Logout", icon: <LuLogOut size={16} />, isDanger: true },
 ];
@@ -172,19 +164,24 @@ function AuthButtons({ onNavigate }: { onNavigate?: () => void }) {
   );
 }
 
-// ─── Navbar ───────────────────────────────────────────────────────────────────
+// ─── Navbar ──────────────
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
   const { user, isAuthenticated, logout } = useAuth();
 
-  const menuItems = [
-    { label: "Home", href: "/" },
-    { label: "Courses", href: "/courses" },
-    { label: "About", href: "/about" },
-    { label: "Contact", href: "/contact" },
-    { label: "Blog", href: "/blog" },
-  ];
+  const navItems = isAuthenticated
+    ? [
+        { label: "Home", href: "/" },
+        { label: "Courses", href: "/courses" },
+        { label: "Dashboard", href: "/dashboard" },
+      ]
+    : [
+        { label: "Home", href: "/" },
+        { label: "Courses", href: "/courses" },
+        { label: "Instructors", href: "/instructors" },
+        { label: "About", href: "/about" },
+      ];
 
   return (
     <header className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-md border-b border-default-100/50">
@@ -199,11 +196,13 @@ export default function Navbar() {
 
           {/* Desktop Navigation Links */}
           <nav className="hidden md:flex items-center gap-8">
-            {menuItems.map((item) => {
+            {navItems.map((item) => {
               const isActive =
                 item.href === "/"
                   ? pathname === "/"
-                  : pathname?.startsWith(item.href);
+                  : item.href === "/dashboard"
+                    ? pathname === "/dashboard" || pathname?.startsWith("/dashboard")
+                    : pathname?.startsWith(item.href);
               return (
                 <Link
                   key={item.label}
@@ -258,11 +257,13 @@ export default function Navbar() {
             className="md:hidden overflow-hidden border-t border-default-100/50 bg-background"
           >
             <div className="px-4 py-6 flex flex-col gap-4">
-              {menuItems.map((item, index) => {
+              {navItems.map((item, index) => {
                 const isActive =
                   item.href === "/"
                     ? pathname === "/"
-                    : pathname?.startsWith(item.href);
+                    : item.href === "/dashboard"
+                      ? pathname === "/dashboard" || pathname?.startsWith("/dashboard")
+                      : pathname?.startsWith(item.href);
                 return (
                   <motion.div
                     key={item.label}
@@ -311,7 +312,7 @@ export default function Navbar() {
                         key={item.id}
                         initial={{ x: -10, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
-                        transition={{ delay: (menuItems.length + index) * 0.05 }}
+                        transition={{ delay: (navItems.length + index) * 0.05 }}
                       >
                         {item.href ? (
                           <Link

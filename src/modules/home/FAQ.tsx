@@ -176,7 +176,7 @@ export default function FAQ() {
             <button className="font-bold text-primary hover:underline">
               Chat with our support team
             </button>{" "}
-            — we're available 24/7.
+            — we&apos;re available 24/7.
           </p>
         </motion.div>
       </div>

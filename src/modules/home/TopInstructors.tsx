@@ -129,7 +129,7 @@ export default function TopInstructors() {
               </span>
             </h2>
             <p className="mt-3 max-w-xl text-sm text-foreground-500">
-              Our instructors aren't just teachers — they're practitioners who've built real things and are obsessed with helping you do the same.
+              Our instructors aren&apos;t just teachers — they&apos;re practitioners who&apos;ve built real things and are obsessed with helping you do the same.
             </p>
           </div>
           <button className="group self-start md:self-auto inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary-600 transition-colors shrink-0">

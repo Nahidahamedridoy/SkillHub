@@ -110,7 +110,7 @@ export default function Newsletter() {
                   <LuCheck className="h-5 w-5 text-white" />
                 </div>
                 <div className="text-left">
-                  <p className="text-sm font-bold text-foreground">You're in! 🎉</p>
+                  <p className="text-sm font-bold text-foreground">You&apos;re in! 🎉</p>
                   <p className="text-xs text-foreground-500">Check your inbox for a welcome gift.</p>
                 </div>
               </motion.div>

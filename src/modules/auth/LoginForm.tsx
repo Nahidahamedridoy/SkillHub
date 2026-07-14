@@ -5,9 +5,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { motion, AnimatePresence } from "framer-motion";
+import toast from "react-hot-toast";
 import {
   Card,
   TextField,
@@ -54,7 +54,21 @@ export default function LoginForm() {
     control,
     formState: { errors },
   } = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
+    resolver: async (values) => {
+      const result = loginSchema.safeParse(values);
+      if (result.success) {
+        return { values: result.data, errors: {} };
+      }
+      const fieldErrors: Record<string, { type: string; message: string }> = {};
+      result.error.issues.forEach((issue) => {
+        const path = issue.path.join(".");
+        fieldErrors[path] = {
+          type: issue.code,
+          message: issue.message,
+        };
+      });
+      return { values: {}, errors: fieldErrors };
+    },
     defaultValues: {
       email: "",
       password: "",
@@ -74,8 +88,15 @@ export default function LoginForm() {
       setTimeout(() => {
         router.push("/dashboard");
       }, 800);
-    } catch (err) {
+    } catch (err: unknown) {
       setIsSubmitting(false);
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : typeof err === "object" && err !== null && "message" in err
+          ? String((err as Record<string, unknown>).message)
+          : "An unexpected error occurred.";
+      toast.error(errorMessage);
     }
   };
 
@@ -243,7 +264,7 @@ export default function LoginForm() {
 
           {/* Form redirection */}
           <p className="text-center text-xs text-foreground-500 font-semibold mt-4">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link
               href="/register"
               className="text-primary hover:text-secondary hover:underline font-bold transition-colors"

@@ -159,7 +159,7 @@ export default function Footer() {
             </Link>
 
             <p className="max-w-xs text-sm leading-relaxed text-foreground-500">
-              SkillHub is the world's leading online learning platform — powering career transformations with expert-led courses across technology, design, business, and more.
+              SkillHub is the world&apos;s leading online learning platform — powering career transformations with expert-led courses across technology, design, business, and more.
             </p>
 
             {/* Contact */}

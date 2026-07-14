@@ -108,7 +108,7 @@ export default function Testimonials() {
             </span>
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-sm text-foreground-500">
-            Over 250,000 learners have already taken the leap. Here's what a few of them have to say.
+            Over 250,000 learners have already taken the leap. Here&apos;s what a few of them have to say.
           </p>
         </motion.div>
 
@@ -137,7 +137,7 @@ export default function Testimonials() {
 
                 {/* Review text */}
                 <p className="mb-8 text-lg font-medium leading-relaxed text-foreground sm:text-xl">
-                  "{t.text}"
+                  &ldquo;{t.text}&rdquo;
                 </p>
 
                 {/* Author row */}

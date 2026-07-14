@@ -122,7 +122,7 @@ export default function WhyChooseUs() {
             </span>
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-sm text-foreground-500 sm:text-base">
-            We built SkillHub around one question: what makes people actually succeed at learning online? Here's our answer.
+            We built SkillHub around one question: what makes people actually succeed at learning online? Here&apos;s our answer.
           </p>
         </motion.div>
 

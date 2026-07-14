@@ -1,15 +1,13 @@
 "use client";
 
-import React, {
+import {
   createContext,
   useContext,
-  useState,
   useEffect,
-  useCallback,
+  useState,
+  ReactNode,
 } from "react";
 import { api } from "@/services/api";
-
-// ─── Types ────────────────────────────────────────────────────────────────────
 
 export type UserRole = "student" | "instructor" | "admin";
 
@@ -21,7 +19,7 @@ export interface AuthUser {
   avatarUrl?: string;
 }
 
-interface AuthContextValue {
+interface AuthContextType {
   user: AuthUser | null;
   isAuthenticated: boolean;
   isLoading: boolean;
@@ -35,102 +33,139 @@ interface AuthContextValue {
   logout: () => Promise<void>;
 }
 
-// ─── Context ──────────────────────────────────────────────────────────────────
+const AuthContext = createContext<AuthContextType | null>(null);
 
-const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+type RawUser = {
+  _id?: string | number;
+  id?: string | number;
+  name?: string;
+  email?: string;
+  role?: UserRole;
+  avatarUrl?: string;
+};
 
-// ─── Provider ─────────────────────────────────────────────────────────────────
-
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Map raw API user object → AuthUser
-  const toAuthUser = (raw: any): AuthUser => ({
+function mapUser(raw: RawUser): AuthUser {
+  return {
     id: String(raw._id || raw.id || ""),
     name: raw.name || "",
     email: raw.email || "",
-    role: (raw.role as UserRole) || "student",
+    role: raw.role || "student",
     avatarUrl: raw.avatarUrl,
-  });
-
-  // ── Hydrate session on mount via GET /auth/me ──────────────────────────────
-  const hydrateSession = useCallback(async () => {
-    try {
-      const { data } = await api.get("/auth/me");
-      if (data.success && data.data) {
-        setUser(toAuthUser(data.data));
-      } else {
-        setUser(null);
-      }
-    } catch {
-      setUser(null);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    hydrateSession();
-  }, [hydrateSession]);
-
-  // ── Register → then auto-login ─────────────────────────────────────────────
-  const register = useCallback(
-    async (
-      name: string,
-      email: string,
-      password: string,
-      role: "student" | "instructor" = "student"
-    ) => {
-      // 1. Create account
-      await api.post("/auth/register", { name, email, password, role });
-
-      // 2. Immediately login to set the session cookie
-      const { data } = await api.post("/auth/login", { email, password });
-      if (data.success && data.data) {
-        setUser(toAuthUser(data.data));
-      }
-    },
-    []
-  );
-
-  // ── Login ──────────────────────────────────────────────────────────────────
-  const login = useCallback(async (email: string, password: string) => {
-    const { data } = await api.post("/auth/login", { email, password });
-    if (data.success && data.data) {
-      setUser(toAuthUser(data.data));
-    }
-  }, []);
-
-  // ── Logout ─────────────────────────────────────────────────────────────────
-  const logout = useCallback(async () => {
-    try {
-      await api.post("/auth/logout");
-    } catch {
-      // Best-effort; always clear local state
-    } finally {
-      setUser(null);
-    }
-  }, []);
-
-  const value: AuthContextValue = {
-    user,
-    isAuthenticated: !!user,
-    isLoading,
-    register,
-    login,
-    logout,
   };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-// ─── Hook ─────────────────────────────────────────────────────────────────────
+const AUTH_TOKEN_KEY = "skillhub_auth_token";
 
-export function useAuth(): AuthContextValue {
-  const ctx = useContext(AuthContext);
-  if (!ctx) {
-    throw new Error("useAuth must be used inside an <AuthProvider>.");
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Check login on refresh only when a stored token exists
+  useEffect(() => {
+    const loadUser = async () => {
+      const token = typeof window !== "undefined"
+        ? localStorage.getItem(AUTH_TOKEN_KEY)
+        : null;
+
+      if (!token) {
+        setUser(null);
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const { data } = await api.get("/auth/me");
+
+        if (data.success) {
+          setUser(mapUser(data.data));
+        }
+      } catch {
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadUser();
+  }, []);
+
+  // Register
+  const register = async (
+    name: string,
+    email: string,
+    password: string,
+    role: "student" | "instructor" = "student"
+  ) => {
+    const { data } = await api.post("/auth/register", {
+      name,
+      email,
+      password,
+      role,
+    });
+
+    if (data.success) {
+      const token =
+        data.data?.token || data.data?.accessToken || data.token || data.accessToken;
+      if (typeof window !== "undefined" && token) {
+        localStorage.setItem(AUTH_TOKEN_KEY, token);
+      }
+
+      setUser(mapUser(data.data));
+    }
+  };
+
+  // Login
+  const login = async (email: string, password: string) => {
+    const { data } = await api.post("/auth/login", {
+      email,
+      password,
+    });
+
+    if (data.success) {
+      const token =
+        data.data?.token || data.data?.accessToken || data.token || data.accessToken;
+      if (typeof window !== "undefined" && token) {
+        localStorage.setItem(AUTH_TOKEN_KEY, token);
+      }
+
+      setUser(mapUser(data.data));
+    }
+  };
+
+  // Logout
+  const logout = async () => {
+    try {
+      await api.post("/auth/logout");
+    } catch { }
+
+    if (typeof window !== "undefined") {
+      localStorage.removeItem(AUTH_TOKEN_KEY);
+    }
+    setUser(null);
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        isAuthenticated: !!user,
+        isLoading,
+        register,
+        login,
+        logout,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+
+  if (!context) {
+    throw new Error("useAuth must be used inside AuthProvider");
   }
-  return ctx;
+
+  return context;
 }
