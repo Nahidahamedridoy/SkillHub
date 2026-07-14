@@ -1,36 +1,247 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 SkillHub - Full Stack TypeScript Application
 
-## Getting Started
+SkillHub is a modern full-stack learning platform built with **TypeScript**, designed to demonstrate professional frontend development, backend architecture, database management, authentication, authorization, API design, and responsive UI/UX practices.
 
-First, run the development server:
+The application provides a seamless experience for users to explore courses, manage learning resources, and interact with a secure role-based system.
+
+---
+
+## 🌐 Live Website
+
+🔗 Live URL: `https://your-live-link.vercel.app`
+
+---
+
+## 📂 Repository
+
+### Frontend
+🔗 GitHub: `https://github.com/your-username/skillhub-client`
+
+### Backend
+🔗 GitHub: `https://github.com/your-username/skillhub-server`
+
+---
+
+# ✨ Features
+
+## 🏠 Landing Page
+
+- Responsive Navbar
+- Interactive Hero Section
+- Featured Courses
+- Course Categories
+- Platform Statistics
+- Top Instructors
+- Testimonials
+- FAQ Section
+- Newsletter Subscription
+- Professional Footer
+
+---
+
+# 🔐 Authentication System
+
+- User Registration
+- User Login
+- JWT based authentication
+- Secure protected routes
+- Role based authorization
+- Form validation
+- Error handling
+- Demo login system
+
+---
+
+# 🎓 Course Management
+
+## Public Features
+
+- Browse all courses
+- Search courses
+- Filter courses
+- Sort courses
+- Course details page
+- Course reviews
+- Related courses
+
+---
+
+## Protected Features
+
+### Add Course
+
+Users can add new courses with:
+
+- Course title
+- Description
+- Category
+- Price
+- Duration
+- Thumbnail image
+- Instructor information
+
+
+### Manage Courses
+
+Users can:
+
+- View added courses
+- Update courses
+- Delete courses
+- Manage course information
+
+---
+
+# 📊 Dashboard
+
+## User Dashboard
+
+- Profile management
+- My courses
+- Wishlist
+- Enrolled courses
+
+
+## Admin Dashboard
+
+- User management
+- Course management
+- Revenue analytics
+- Statistics visualization
+- System overview
+
+---
+
+# 🛠️ Technology Stack
+
+## Frontend
+
+- Next.js
+- React.js
+- TypeScript
+- Tailwind CSS
+- HeroUI
+- Framer Motion
+- Recharts
+- React Hook Form
+- React Icons
+
+
+## Backend
+
+- Node.js
+- Express.js
+- TypeScript
+- MongoDB
+- JWT Authentication
+
+
+## Tools
+
+- Git & GitHub
+- Vercel Deployment
+- MongoDB Atlas
+
+---
+
+# 📁 Project Structure
+SkillHub
+
+├── client
+│
+├── src
+│ ├── app
+│ ├── components
+│ ├── hooks
+│ ├── services
+│ ├── types
+│ ├── utils
+│ ├── providers
+│ └── constants
+│
+└── server
+├── src
+│   ├── controllers
+│   ├── routes
+│   ├── models
+│   ├── middleware
+│   ├── config
+│   └── utils
+
+---
+
+# 🎨 UI/UX Features
+
+- Fully responsive design
+- Mobile, tablet and desktop support
+- Consistent card design
+- Modern animations
+- Loading skeletons
+- Empty states
+- Error handling UI
+- Clean spacing and alignment
+- Professional color system
+
+---
+
+# 🔎 Explore & Search Features
+
+Users can:
+
+- Search courses
+- Filter by category
+- Filter by price
+- Sort courses
+- Navigate using pagination
+
+---
+
+# 📄 Pages
+
+## Public Pages
+
+- Home
+- Courses
+- Course Details
+- About
+- Contact
+- Blog
+- Login
+- Register
+
+
+## Protected Pages
+
+- Dashboard
+- Add Course
+- Manage Courses
+- Profile
+
+---
+
+# 🔒 Security
+
+- JWT authentication
+- Protected API routes
+- Role-based access control
+- Secure environment variables
+- Server-side validation
+
+---
+
+# 📦 Installation & Setup
+
+## Clone Repository
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+git clone https://github.com/your-username/skillhub-client.git
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+npm install
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+🚀 Future Improvements
+Online payment integration
+Real-time notifications
+AI course recommendations
+Live class system
+Advanced analytics
