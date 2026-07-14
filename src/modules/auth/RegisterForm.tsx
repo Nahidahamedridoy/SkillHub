@@ -8,6 +8,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { motion, AnimatePresence } from "framer-motion";
+import toast from "react-hot-toast";
 import {
   TextField,
   Input,
@@ -77,14 +78,14 @@ const MiniProgressBar = () => {
 
 export default function RegisterForm() {
   const router = useRouter();
-  const { login } = useAuth();
+  const { register } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
   const {
-    register,
+    register: registerField,
     handleSubmit,
     control,
     setValue,
@@ -107,19 +108,26 @@ export default function RegisterForm() {
   const onSubmit = async (data: RegisterFormValues) => {
     setIsSubmitting(true);
     try {
-      // Pass name and role as override so AuthContext stores the correct values
-      await login(data.email, data.password, {
-        name: data.name,
-        role: data.role as "student" | "instructor",
-      });
+      await register(
+        data.name,
+        data.email,
+        data.password,
+        data.role
+      );
       setIsSubmitting(false);
       setSubmitSuccess(true);
+      toast.success("Successfully Registered!");
 
       setTimeout(() => {
         router.push("/dashboard");
       }, 800);
-    } catch {
+    } catch (err: any) {
       setIsSubmitting(false);
+      const errorMessage = err?.message || "An unexpected error occurred.";
+      toast.error(errorMessage);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Registration error:", err);
+      }
     }
   };
 
@@ -286,7 +294,7 @@ export default function RegisterForm() {
                     type="text"
                     placeholder="John Doe"
                     className="w-full pl-11 pr-4 py-3 rounded-xl border border-default-200 bg-default-50/50 hover:bg-default-50/80 focus:bg-background text-sm text-foreground placeholder:text-foreground-400 outline-none transition-all duration-200 focus:border-primary focus:ring-2 focus:ring-primary/20"
-                    {...register("name")}
+                    {...registerField("name")}
                   />
                 </div>
                 {errors.name && (
@@ -309,7 +317,7 @@ export default function RegisterForm() {
                     type="email"
                     placeholder="name@example.com"
                     className="w-full pl-11 pr-4 py-3 rounded-xl border border-default-200 bg-default-50/50 hover:bg-default-50/80 focus:bg-background text-sm text-foreground placeholder:text-foreground-400 outline-none transition-all duration-200 focus:border-primary focus:ring-2 focus:ring-primary/20"
-                    {...register("email")}
+                    {...registerField("email")}
                   />
                 </div>
                 {errors.email && (
@@ -332,7 +340,7 @@ export default function RegisterForm() {
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     className="w-full pl-11 pr-12 py-3 rounded-xl border border-default-200 bg-default-50/50 hover:bg-default-50/80 focus:bg-background text-sm text-foreground placeholder:text-foreground-400 outline-none transition-all duration-200 focus:border-primary focus:ring-2 focus:ring-primary/20"
-                    {...register("password")}
+                    {...registerField("password")}
                   />
                   <button
                     type="button"
@@ -362,7 +370,7 @@ export default function RegisterForm() {
                     type={showConfirmPassword ? "text" : "password"}
                     placeholder="••••••••"
                     className="w-full pl-11 pr-12 py-3 rounded-xl border border-default-200 bg-default-50/50 hover:bg-default-50/80 focus:bg-background text-sm text-foreground placeholder:text-foreground-400 outline-none transition-all duration-200 focus:border-primary focus:ring-2 focus:ring-primary/20"
-                    {...register("confirmPassword")}
+                    {...registerField("confirmPassword")}
                   />
                   <button
                     type="button"
