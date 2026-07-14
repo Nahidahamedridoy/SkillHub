@@ -13,17 +13,7 @@ import {
   LuLogOut,
 } from "react-icons/lu";
 
-// ─── Temporary auth state ────────────────────────────────────────────────────
-// Replace this with your real auth hook (e.g. useSession, useAuth, etc.)
-const isLoggedIn = false;
-
-// ─── Mock user ───────────────────────────────────────────────────────────────
-const mockUser = {
-  name: "Jane Doe",
-  email: "jane@skillhub.com",
-  avatarSrc: "", // set a URL to show a real image
-};
-// ─────────────────────────────────────────────────────────────────────────────
+import { useAuth } from "@/context/AuthContext";
 
 const Logo = () => (
   <div className="flex items-center gap-2.5 group">
@@ -91,16 +81,18 @@ const userMenuItems: UserMenuItem[] = [
 // ─── UserMenu ─────────────────────────────────────────────────────────────────
 function UserMenu() {
   const router = useRouter();
+  const { user, logout } = useAuth();
 
   const handleAction = (id: string) => {
     if (id === "logout") {
-      // TODO: call your logout handler here
-      console.log("Logout triggered");
+      logout();
       return;
     }
     const item = userMenuItems.find((i) => i.id === id);
     if (item?.href) router.push(item.href);
   };
+
+  if (!user) return null;
 
   return (
     <Dropdown>
@@ -114,9 +106,9 @@ function UserMenu() {
             color="accent"
             className="cursor-pointer"
           >
-            <Avatar.Image src={mockUser.avatarSrc} alt={mockUser.name} />
+            <Avatar.Image src={user.avatarUrl ?? ""} alt={user.name} />
             <Avatar.Fallback>
-              {mockUser.name
+              {user.name
                 .split(" ")
                 .map((n) => n[0])
                 .join("")
@@ -129,11 +121,11 @@ function UserMenu() {
       <Dropdown.Popover className="w-56">
         {/* User info header */}
         <div className="px-3 py-3 border-b border-default-100">
-          <p className="text-sm font-semibold text-foreground truncate">{mockUser.name}</p>
-          <p className="text-xs text-foreground-400 truncate">{mockUser.email}</p>
+          <p className="text-sm font-semibold text-foreground truncate">{user.name}</p>
+          <p className="text-xs text-foreground-400 truncate">{user.email}</p>
         </div>
 
-        <Dropdown.Menu onAction={handleAction} aria-label="User menu">
+        <Dropdown.Menu onAction={(key) => handleAction(String(key))} aria-label="User menu">
           {userMenuItems.map((item) => (
             <Dropdown.Item
               key={item.id}
@@ -184,6 +176,7 @@ function AuthButtons({ onNavigate }: { onNavigate?: () => void }) {
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
+  const { user, isAuthenticated, logout } = useAuth();
 
   const menuItems = [
     { label: "Home", href: "/" },
@@ -235,7 +228,7 @@ export default function Navbar() {
           {/* Desktop Action Area */}
           <div className="flex items-center gap-4">
             <div className="hidden md:flex items-center gap-3">
-              {isLoggedIn ? (
+              {isAuthenticated ? (
                 <UserMenu />
               ) : (
                 <AuthButtons />
@@ -294,14 +287,14 @@ export default function Navbar() {
 
               {/* Mobile Auth Area */}
               <div className="flex flex-col gap-3 mt-4 pt-4 border-t border-default-100/50">
-                {isLoggedIn ? (
+                {isAuthenticated && user ? (
                   // Mobile: show user info + menu items inline
                   <>
                     <div className="flex items-center gap-3 pb-3 border-b border-default-100/50">
                       <Avatar size="sm" color="accent">
-                        <Avatar.Image src={mockUser.avatarSrc} alt={mockUser.name} />
+                        <Avatar.Image src={user.avatarUrl ?? ""} alt={user.name} />
                         <Avatar.Fallback>
-                          {mockUser.name
+                          {user.name
                             .split(" ")
                             .map((n) => n[0])
                             .join("")
@@ -309,8 +302,8 @@ export default function Navbar() {
                         </Avatar.Fallback>
                       </Avatar>
                       <div>
-                        <p className="text-sm font-semibold text-foreground">{mockUser.name}</p>
-                        <p className="text-xs text-foreground-400">{mockUser.email}</p>
+                        <p className="text-sm font-semibold text-foreground">{user.name}</p>
+                        <p className="text-xs text-foreground-400">{user.email}</p>
                       </div>
                     </div>
                     {userMenuItems.map((item, index) => (
@@ -338,7 +331,7 @@ export default function Navbar() {
                             className="flex items-center gap-3 py-2 text-base font-medium text-danger hover:text-danger/80 transition-colors w-full text-left"
                             onClick={() => {
                               setIsMenuOpen(false);
-                              console.log("Logout triggered");
+                              logout();
                             }}
                           >
                             {item.icon}

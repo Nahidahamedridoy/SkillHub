@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -25,9 +26,11 @@ import {
   LuBookOpen,
   LuAward,
   LuArrowRight,
+  LuPresentation,
 } from "react-icons/lu";
 
 // ─── Validation Schema ────────────────────────────────────────────────────────
+
 const registerSchema = z
   .object({
     name: z
@@ -43,6 +46,9 @@ const registerSchema = z
       .min(1, "Password is required")
       .min(6, "Password must be at least 6 characters"),
     confirmPassword: z.string().min(1, "Confirm password is required"),
+    role: z.enum(["student", "instructor"], {
+      error: "Please select a role",
+    }),
     acceptTerms: z.boolean().refine((val) => val === true, {
       message: "You must accept the terms and conditions",
     }),
@@ -54,7 +60,8 @@ const registerSchema = z
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
-// ─── SVG / Card Assets for Left Panel ──────────────────────────────────────────
+// ─── SVG / Card Assets for Left Panel ─────────────────────────────────────────
+
 const MiniProgressBar = () => {
   return (
     <div className="w-full bg-slate-800 rounded-full h-2 mt-2.5 overflow-hidden">
@@ -70,6 +77,7 @@ const MiniProgressBar = () => {
 
 export default function RegisterForm() {
   const router = useRouter();
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -79,6 +87,8 @@ export default function RegisterForm() {
     register,
     handleSubmit,
     control,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -87,26 +97,35 @@ export default function RegisterForm() {
       email: "",
       password: "",
       confirmPassword: "",
+      role: "student",
       acceptTerms: false,
     },
   });
 
+  const selectedRole = watch("role");
+
   const onSubmit = async (data: RegisterFormValues) => {
     setIsSubmitting(true);
-    // Simulate API registration call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    setIsSubmitting(false);
-    setSubmitSuccess(true);
+    try {
+      // Pass name and role as override so AuthContext stores the correct values
+      await login(data.email, data.password, {
+        name: data.name,
+        role: data.role as "student" | "instructor",
+      });
+      setIsSubmitting(false);
+      setSubmitSuccess(true);
 
-    // Redirect to dashboard after a successful simulation delay
-    setTimeout(() => {
-      router.push("/dashboard");
-    }, 800);
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 800);
+    } catch {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 min-h-screen bg-background text-foreground">
-      {/* ─── LEFT PANEL (DESKTOP ILLUSTRATION & BRANDING) ───────────────────────── */}
+      {/* ─── LEFT PANEL (DESKTOP ILLUSTRATION & BRANDING) ─────────────────────── */}
       <div className="hidden lg:flex lg:col-span-5 relative flex-col justify-between p-12 overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 border-r border-default-100/10">
         {/* Glowing Decorative Orbs */}
         <div className="absolute top-[-10%] left-[-10%] h-[50%] w-[50%] rounded-full bg-primary/10 blur-3xl pointer-events-none" />
@@ -194,10 +213,10 @@ export default function RegisterForm() {
         </div>
       </div>
 
-      {/* ─── RIGHT PANEL (REGISTRATION FORM) ────────────────────────────────────── */}
+      {/* ─── RIGHT PANEL (REGISTRATION FORM) ──────────────────────────────────── */}
       <div className="col-span-12 lg:col-span-7 flex flex-col justify-center px-6 sm:px-16 lg:px-20 py-12 relative">
         <div className="max-w-md w-full mx-auto space-y-8">
-          {/* Logo representation on Mobile devices */}
+          {/* Logo on Mobile */}
           <div className="flex lg:hidden justify-center">
             <Link href="/" className="flex items-center gap-2 group">
               <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-primary to-secondary shadow-lg shadow-primary/20">
@@ -209,7 +228,7 @@ export default function RegisterForm() {
             </Link>
           </div>
 
-          {/* Heading intro */}
+          {/* Heading */}
           <div className="text-center lg:text-left space-y-2">
             <h1 className="text-3xl font-extrabold tracking-tight">Create Account</h1>
             <p className="text-foreground-500 text-sm">
@@ -218,7 +237,7 @@ export default function RegisterForm() {
           </div>
 
           <div className="space-y-6">
-            {/* Social Logins */}
+            {/* Social Login */}
             <Button
               type="button"
               className="w-full flex items-center justify-center gap-2.5 rounded-xl border border-default-200 bg-background hover:bg-default-50 text-sm font-semibold text-foreground py-3 h-12 transition-all duration-200 active:scale-[0.98]"
@@ -241,7 +260,7 @@ export default function RegisterForm() {
               <div className="flex-grow border-t border-default-200" />
             </div>
 
-            {/* Form Fields */}
+            {/* Form */}
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <AnimatePresence mode="wait">
                 {submitSuccess && (
@@ -256,7 +275,7 @@ export default function RegisterForm() {
                 )}
               </AnimatePresence>
 
-              {/* Full Name Input */}
+              {/* Full Name */}
               <TextField className="flex flex-col gap-1.5 w-full">
                 <Label className="text-xs font-semibold text-foreground-700 tracking-wide">
                   Full Name
@@ -271,11 +290,7 @@ export default function RegisterForm() {
                   />
                 </div>
                 {errors.name && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="w-full"
-                  >
+                  <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="w-full">
                     <FieldError className="text-xs text-rose-500 font-semibold mt-1.5 block">
                       {errors.name.message}
                     </FieldError>
@@ -283,7 +298,7 @@ export default function RegisterForm() {
                 )}
               </TextField>
 
-              {/* Email Input */}
+              {/* Email */}
               <TextField className="flex flex-col gap-1.5 w-full">
                 <Label className="text-xs font-semibold text-foreground-700 tracking-wide">
                   Email Address
@@ -298,11 +313,7 @@ export default function RegisterForm() {
                   />
                 </div>
                 {errors.email && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="w-full"
-                  >
+                  <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="w-full">
                     <FieldError className="text-xs text-rose-500 font-semibold mt-1.5 block">
                       {errors.email.message}
                     </FieldError>
@@ -310,7 +321,7 @@ export default function RegisterForm() {
                 )}
               </TextField>
 
-              {/* Password Input */}
+              {/* Password */}
               <TextField className="flex flex-col gap-1.5 w-full">
                 <Label className="text-xs font-semibold text-foreground-700 tracking-wide">
                   Password
@@ -332,11 +343,7 @@ export default function RegisterForm() {
                   </button>
                 </div>
                 {errors.password && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="w-full"
-                  >
+                  <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="w-full">
                     <FieldError className="text-xs text-rose-500 font-semibold mt-1.5 block">
                       {errors.password.message}
                     </FieldError>
@@ -344,7 +351,7 @@ export default function RegisterForm() {
                 )}
               </TextField>
 
-              {/* Confirm Password Input */}
+              {/* Confirm Password */}
               <TextField className="flex flex-col gap-1.5 w-full">
                 <Label className="text-xs font-semibold text-foreground-700 tracking-wide">
                   Confirm Password
@@ -366,17 +373,74 @@ export default function RegisterForm() {
                   </button>
                 </div>
                 {errors.confirmPassword && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="w-full"
-                  >
+                  <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="w-full">
                     <FieldError className="text-xs text-rose-500 font-semibold mt-1.5 block">
                       {errors.confirmPassword.message}
                     </FieldError>
                   </motion.div>
                 )}
               </TextField>
+
+              {/* ─── Role Selector ─────────────────────────────────────────────── */}
+              <div className="flex flex-col gap-1.5">
+                <span className="text-xs font-semibold text-foreground-700 tracking-wide">
+                  I want to join as
+                </span>
+                <div className="grid grid-cols-2 gap-3">
+                  {(
+                    [
+                      {
+                        value: "student",
+                        label: "Student",
+                        desc: "Learn new skills",
+                        icon: <LuGraduationCap size={22} />,
+                        activeClass: "border-primary bg-primary/5 text-primary",
+                      },
+                      {
+                        value: "instructor",
+                        label: "Instructor",
+                        desc: "Teach & earn",
+                        icon: <LuPresentation size={22} />,
+                        activeClass: "border-violet-500 bg-violet-500/5 text-violet-500",
+                      },
+                    ] as const
+                  ).map((opt) => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => setValue("role", opt.value, { shouldValidate: true })}
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl border-2 transition-all duration-200 cursor-pointer text-left ${
+                        selectedRole === opt.value
+                          ? opt.activeClass
+                          : "border-default-200 text-foreground-500 hover:border-default-300 hover:bg-default-50"
+                      }`}
+                    >
+                      <span
+                        className={`shrink-0 ${
+                          selectedRole === opt.value ? "" : "text-foreground-400"
+                        }`}
+                      >
+                        {opt.icon}
+                      </span>
+                      <div>
+                        <p className="text-sm font-bold leading-none">{opt.label}</p>
+                        <p
+                          className={`text-[10px] mt-0.5 ${
+                            selectedRole === opt.value ? "opacity-80" : "text-foreground-400"
+                          }`}
+                        >
+                          {opt.desc}
+                        </p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+                {errors.role && (
+                  <p className="text-xs text-rose-500 font-semibold mt-0.5">
+                    {errors.role.message}
+                  </p>
+                )}
+              </div>
 
               {/* Accept Terms Checkbox */}
               <div className="pt-1">
@@ -401,11 +465,7 @@ export default function RegisterForm() {
                   )}
                 />
                 {errors.acceptTerms && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="w-full"
-                  >
+                  <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="w-full">
                     <FieldError className="text-xs text-rose-500 font-semibold mt-1.5 block">
                       {errors.acceptTerms.message}
                     </FieldError>
@@ -434,7 +494,7 @@ export default function RegisterForm() {
             </form>
           </div>
 
-          {/* Form redirection */}
+          {/* Redirect to Login */}
           <p className="text-center text-xs text-foreground-500 font-semibold mt-4">
             Already have an account?{" "}
             <Link

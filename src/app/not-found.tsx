@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { Button } from "@heroui/react";
@@ -54,10 +54,10 @@ export default function NotFound() {
           <Link href="/">
             <Button
               size="lg"
-              className="bg-gradient-to-r from-primary to-secondary text-white font-semibold rounded-xl px-8 shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:scale-[1.03] active:scale-[0.97] transition-all duration-200"
-              startContent={<LuHouse size={18} />}
+              className="bg-gradient-to-r from-primary to-secondary text-white font-semibold rounded-xl px-8 shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:scale-[1.03] active:scale-[0.97] transition-all duration-200 flex items-center justify-center gap-2"
             >
-              Back to Home
+              <LuHouse size={18} />
+              <span>Back to Home</span>
             </Button>
           </Link>
         </motion.div>

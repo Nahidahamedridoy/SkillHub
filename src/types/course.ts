@@ -54,6 +54,8 @@ export interface Course {
   badge?: string;
   lessonsCount: number;
   duration: string;
+  /** Admin-controlled review status. Defaults to 'approved' for seeded data. */
+  status?: "pending" | "approved" | "rejected";
 
   // ── Detail-view extended fields ──
   description?: string;                  // short one-liner for banner

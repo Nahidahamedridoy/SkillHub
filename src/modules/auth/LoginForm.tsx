@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -42,6 +43,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function LoginForm() {
   const router = useRouter();
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
@@ -62,15 +64,19 @@ export default function LoginForm() {
 
   const onSubmit = async (data: LoginFormValues) => {
     setIsSubmitting(true);
-    // Simulate API authorization response
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsSubmitting(false);
-    setSubmitSuccess(true);
-    
-    // Redirect to dashboard after a successful simulation delay
-    setTimeout(() => {
-      router.push("/dashboard");
-    }, 800);
+    try {
+      // Call authentication provider to set session
+      await login(data.email, data.password);
+      setIsSubmitting(false);
+      setSubmitSuccess(true);
+      
+      // Redirect to dashboard after a successful simulation delay
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 800);
+    } catch (err) {
+      setIsSubmitting(false);
+    }
   };
 
   return (
