@@ -3,7 +3,6 @@
 import React from "react";
 import { motion, Variants } from "framer-motion";
 import { LuLayoutGrid } from "react-icons/lu";
-import { COURSES_DATA } from "@/data/courses";
 import { Course } from "@/types/course";
 import CourseCard from "@/components/course/CourseCard";
 
@@ -45,13 +44,12 @@ const headingVariants: Variants = {
 // ─── Props ─────────────────────────────────────────────────────────────────────
 
 interface CoursesGridProps {
-  /** Optionally pass a filtered subset; falls back to all static data. */
-  courses?: Course[];
+  courses: Course[];
 }
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 
-export default function CoursesGrid({ courses = COURSES_DATA }: CoursesGridProps) {
+export default function CoursesGrid({ courses }: CoursesGridProps) {
   const count = courses.length;
 
   return (

@@ -10,6 +10,7 @@ import {
   LuTrendingUp,
   LuAward,
 } from "react-icons/lu";
+import GradientText from "@/components/ui/GradientText";
 
 // ── Animated Counter ──────────────────────────────────────────────────────────
 function AnimatedCounter({
@@ -200,9 +201,9 @@ export default function Statistics() {
             className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl lg:text-5xl"
           >
             Trusted by{" "}
-            <span className="bg-gradient-to-r from-primary to-violet-500 bg-clip-text text-transparent">
+            <GradientText gradient="bg-gradient-to-r from-primary to-violet-500">
               Learners Worldwide
-            </span>
+            </GradientText>
           </motion.h2>
 
           <motion.p

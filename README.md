@@ -1,131 +1,91 @@
-# 🚀 SkillHub - Full Stack TypeScript Application
+# 🎓 SkillHub
 
-SkillHub is a modern full-stack learning platform built with **TypeScript**, designed to demonstrate professional frontend development, backend architecture, database management, authentication, authorization, API design, and responsive UI/UX practices.
+SkillHub is a modern full-stack e-learning platform where students can discover and enroll in courses, instructors can manage their courses, and administrators can manage the entire platform.
 
-The application provides a seamless experience for users to explore courses, manage learning resources, and interact with a secure role-based system.
-
----
-
-## 🌐 Live Website
-
-🔗 Live URL: `https://your-live-link.vercel.app`
+Built with **Next.js, TypeScript, Express.js, MongoDB, JWT Authentication, and Tailwind CSS**.
 
 ---
 
-## 📂 Repository
+## 🌐 Live Demo
+
+- **Frontend:** https://your-frontend.vercel.app
+- **Backend:** https://your-backend.onrender.com
+
+---
+
+## 📂 GitHub Repository
 
 ### Frontend
-🔗 GitHub: `https://github.com/your-username/skillhub-client`
+https://github.com/your-username/skillhub-client
 
 ### Backend
-🔗 GitHub: `https://github.com/your-username/skillhub-server`
+https://github.com/your-username/skillhub-server
 
 ---
 
 # ✨ Features
 
-## 🏠 Landing Page
+## 🔐 Authentication
 
-- Responsive Navbar
-- Interactive Hero Section
-- Featured Courses
-- Course Categories
-- Platform Statistics
-- Top Instructors
-- Testimonials
-- FAQ Section
-- Newsletter Subscription
-- Professional Footer
+- JWT Authentication
+- HTTP Only Cookie
+- Role Based Access
+- Protected Routes
+- Secure Login & Registration
 
 ---
 
-# 🔐 Authentication System
+## 👨‍🎓 Student Features
 
-- User Registration
-- User Login
-- JWT based authentication
-- Secure protected routes
-- Role based authorization
-- Form validation
-- Error handling
-- Demo login system
-
----
-
-# 🎓 Course Management
-
-## Public Features
-
-- Browse all courses
-- Search courses
-- Filter courses
-- Sort courses
-- Course details page
-- Course reviews
-- Related courses
-
----
-
-## Protected Features
-
-### Add Course
-
-Users can add new courses with:
-
-- Course title
-- Description
-- Category
-- Price
-- Duration
-- Thumbnail image
-- Instructor information
-
-
-### Manage Courses
-
-Users can:
-
-- View added courses
-- Update courses
-- Delete courses
-- Manage course information
-
----
-
-# 📊 Dashboard
-
-## User Dashboard
-
-- Profile management
-- My courses
+- Browse Courses
+- Search Courses
+- Filter Courses
+- Sort Courses
+- Course Details
+- Dashboard
+- Learning Statistics
 - Wishlist
-- Enrolled courses
-
-
-## Admin Dashboard
-
-- User management
-- Course management
-- Revenue analytics
-- Statistics visualization
-- System overview
+- Profile Management
 
 ---
 
-# 🛠️ Technology Stack
+## 👨‍🏫 Instructor Features
+
+- Instructor Dashboard
+- Create Course
+- Manage Courses
+- View Students
+- Revenue Overview
+- Profile
+
+---
+
+## 👨‍💼 Admin Features
+
+- Admin Dashboard
+- Manage Users
+- Manage Courses
+- Manage Categories
+- Analytics
+- Revenue Overview
+
+---
+
+# 🚀 Technology Stack
 
 ## Frontend
 
 - Next.js
-- React.js
+- React
 - TypeScript
 - Tailwind CSS
 - HeroUI
 - Framer Motion
-- Recharts
 - React Hook Form
-- React Icons
+- React Hot Toast
+- Axios
 
+---
 
 ## Backend
 
@@ -133,115 +93,206 @@ Users can:
 - Express.js
 - TypeScript
 - MongoDB
-- JWT Authentication
+- JWT
+- bcrypt
+- Cookie Parser
+- CORS
 
+---
 
-## Tools
+## Database
 
-- Git & GitHub
-- Vercel Deployment
 - MongoDB Atlas
 
 ---
 
 # 📁 Project Structure
-SkillHub
 
-├── client
+## Frontend
+
+```
+src/
 │
-├── src
-│ ├── app
-│ ├── components
-│ ├── hooks
-│ ├── services
-│ ├── types
-│ ├── utils
-│ ├── providers
-│ └── constants
+├── app/
+├── components/
+├── services/
+├── hooks/
+├── context/
+├── types/
+├── utils/
+├── lib/
+├── assets/
+└── providers/
+```
+
+## Backend
+
+```
+src/
 │
-└── server
-├── src
-│   ├── controllers
-│   ├── routes
-│   ├── models
-│   ├── middleware
-│   ├── config
-│   └── utils
+├── controllers/
+├── routes/
+├── services/
+├── middleware/
+├── models/
+├── config/
+├── utils/
+└── server.ts
+```
 
 ---
 
-# 🎨 UI/UX Features
-
-- Fully responsive design
-- Mobile, tablet and desktop support
-- Consistent card design
-- Modern animations
-- Loading skeletons
-- Empty states
-- Error handling UI
-- Clean spacing and alignment
-- Professional color system
-
----
-
-# 🔎 Explore & Search Features
-
-Users can:
-
-- Search courses
-- Filter by category
-- Filter by price
-- Sort courses
-- Navigate using pagination
-
----
-
-# 📄 Pages
-
-## Public Pages
-
-- Home
-- Courses
-- Course Details
-- About
-- Contact
-- Blog
-- Login
-- Register
-
-
-## Protected Pages
-
-- Dashboard
-- Add Course
-- Manage Courses
-- Profile
-
----
-
-# 🔒 Security
-
-- JWT authentication
-- Protected API routes
-- Role-based access control
-- Secure environment variables
-- Server-side validation
-
----
-
-# 📦 Installation & Setup
+# ⚙️ Installation
 
 ## Clone Repository
 
 ```bash
-git clone https://github.com/your-username/skillhub-client.git
+git clone <repository-url>
+```
 
+### Frontend
+
+```bash
+cd client
 npm install
+npm run dev
+```
 
+### Backend
 
-🚀 Future Improvements
-Online payment integration
-Real-time notifications
-AI course recommendations
-Live class system
-Advanced analytics
+```bash
+cd server
+npm install
+npm run dev
+```
+
+---
+
+# 🔑 Environment Variables
+
+## Frontend
+
+```env
+NEXT_PUBLIC_API_URL=
+```
+
+---
+
+## Backend
+
+```env
+PORT=
+
+MONGODB_URI=
+
+JWT_SECRET=
+
+CLIENT_URL=
+```
+
+---
+
+# 📸 Screens
+
+- Home
+- Courses
+- Course Details
+- Dashboard
+- Student Dashboard
+- Instructor Dashboard
+- Admin Dashboard
+- Login
+- Register
+
+---
+
+# 🔥 Core Functionalities
+
+- Authentication
+- Authorization
+- Protected Routes
+- Role Based Dashboard
+- Course Search
+- Course Filter
+- Course Sorting
+- Pagination
+- Dashboard Analytics
+- Responsive Design
+
+---
+
+# 📱 Responsive
+
+- Desktop
+- Tablet
+- Mobile
+
+---
+
+# Demo Credentials
+
+## Student
+
+Email:
+```
+student@example.com
+```
+
+Password:
+```
+123456
+```
+
+---
+
+## Instructor
+
+Email:
+```
+instructor@example.com
+```
+
+Password:
+```
+123456
+```
+
+---
+
+## Admin
+example
+
+Email:
+```
+admin@example.com
+```
+
+Password:
+```
+123456
+```
+
+---
+
+# 📌 Future Improvements
+
+- Stripe Payment Integration
+- Course Reviews
+- Notifications
+- Certificates
+- Video Streaming
+- Real-time Chat
+- Course Progress Tracking
+
+---
+
+# 👨‍💻 Author
+
+**Nahid Ahamed Ridoy**
+
+- GitHub: https://github.com/Nahidahamedridoy
+- LinkedIn: https://www.linkedin.com/in/nahid-ahamed-ridoy
+
+---
+
+⭐ If you like this project, don't forget to give it a star.

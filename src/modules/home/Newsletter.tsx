@@ -3,6 +3,7 @@
 import React, { useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { LuMail, LuSend, LuCheck, LuStar, LuZap, LuShieldCheck } from "react-icons/lu";
+import GradientText from "@/components/ui/GradientText";
 
 const perks = [
   { icon: LuZap, text: "Weekly curated course picks" },
@@ -77,9 +78,7 @@ export default function Newsletter() {
             <div>
               <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
                 Stay ahead of the{" "}
-                <span className="bg-gradient-to-r from-primary to-violet-500 bg-clip-text text-transparent">
-                  curve
-                </span>
+                <GradientText>curve</GradientText>
               </h2>
               <p className="mx-auto mt-3 max-w-lg text-sm text-foreground-500 sm:text-base">
                 Get the best new courses, industry trends, and exclusive discounts delivered straight to your inbox — every week.

@@ -3,6 +3,8 @@
 import React, { useRef, useState } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { LuPlus, LuMinus } from "react-icons/lu";
+import GradientText from "@/components/ui/GradientText";
+import SectionTitle from "@/components/ui/SectionTitle";
 
 const faqs = [
   {
@@ -131,19 +133,20 @@ export default function FAQ() {
           transition={{ duration: 0.6 }}
           className="mb-12 text-center"
         >
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-xs font-semibold text-primary">
-            <span className="h-1.5 w-1.5 animate-ping rounded-full bg-primary" />
-            Got questions?
-          </div>
-          <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-            Frequently asked{" "}
-            <span className="bg-gradient-to-r from-primary to-violet-500 bg-clip-text text-transparent">
-              questions
-            </span>
-          </h2>
-          <p className="mx-auto mt-4 max-w-xl text-sm text-foreground-500">
-            Everything you need to know before you get started. Still have questions? Our support team is here 24/7.
-          </p>
+          <SectionTitle
+            eyebrow={
+              <>
+                <span className="h-1.5 w-1.5 animate-ping rounded-full bg-primary" />
+                Got questions?
+              </>
+            }
+            title={
+              <>
+                Frequently asked <GradientText>questions</GradientText>
+              </>
+            }
+            description="Everything you need to know before you get started. Still have questions? Our support team is here 24/7."
+          />
         </motion.div>
 
         {/* Accordion */}

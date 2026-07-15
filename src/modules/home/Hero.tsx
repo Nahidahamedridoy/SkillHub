@@ -13,7 +13,7 @@ import {
   LuUsers,
 } from "react-icons/lu";
 import Link from "next/link";
-
+import GradientText from "@/components/ui/GradientText";
 // Animation Variants
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -104,9 +104,9 @@ export default function Hero() {
               className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl md:text-6xl leading-[1.1] sm:leading-[1.15]"
             >
               Master New Skills, <br />
-              <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              <GradientText as="span" className="relative inline-block pb-1">
                 Elevate Your Career
-              </span>
+              </GradientText>
             </motion.h1>
 
             {/* Description */}

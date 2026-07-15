@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { motion, Variants } from "framer-motion";
 import { LuHouse, LuChevronRight, LuBookOpen, LuSparkles } from "react-icons/lu";
+import GradientText from "@/components/ui/GradientText";
 
 // Animation variants for smooth entrance
 const containerVariants: Variants = {
@@ -118,11 +119,10 @@ export default function CoursesHero() {
               variants={itemVariants}
               className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl text-foreground"
             >
-              Explore{" "}
-              <span className="relative inline-block bg-gradient-to-r from-primary via-indigo-500 to-secondary bg-clip-text text-transparent pb-1">
+              Explore <GradientText as="span" className="relative inline-block pb-1">
                 Courses
                 <span className="absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-primary/50 to-secondary/50 rounded-full" />
-              </span>
+              </GradientText>
             </motion.h1>
             
             <motion.p 

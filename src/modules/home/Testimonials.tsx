@@ -3,6 +3,7 @@
 import React, { useRef, useState } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { LuStar, LuQuote, LuChevronLeft, LuChevronRight } from "react-icons/lu";
+import GradientText from "@/components/ui/GradientText";
 
 const testimonials = [
   {
@@ -102,10 +103,7 @@ export default function Testimonials() {
             Student Success Stories
           </div>
           <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-            Real people,{" "}
-            <span className="bg-gradient-to-r from-primary to-violet-500 bg-clip-text text-transparent">
-              real results
-            </span>
+            Real people, <GradientText>real results</GradientText>
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-sm text-foreground-500">
             Over 250,000 learners have already taken the leap. Here&apos;s what a few of them have to say.

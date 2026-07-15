@@ -3,6 +3,7 @@
 import React, { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { LuStar, LuUsers, LuBookOpen, LuExternalLink } from "react-icons/lu";
+import GradientText from "@/components/ui/GradientText";
 
 const instructors = [
   {
@@ -123,10 +124,7 @@ export default function TopInstructors() {
               Meet the Experts
             </div>
             <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-              Learn from{" "}
-              <span className="bg-gradient-to-r from-primary to-violet-500 bg-clip-text text-transparent">
-                World-Class Instructors
-              </span>
+              Learn from <GradientText>World-Class Instructors</GradientText>
             </h2>
             <p className="mt-3 max-w-xl text-sm text-foreground-500">
               Our instructors aren&apos;t just teachers — they&apos;re practitioners who&apos;ve built real things and are obsessed with helping you do the same.

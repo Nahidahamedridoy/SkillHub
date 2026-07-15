@@ -6,13 +6,13 @@ import { motion, Variants } from "framer-motion";
 import { LuArrowRight } from "react-icons/lu";
 import Link from "next/link";
 import CourseCard from "@/components/course/CourseCard";
-import { COURSES_DATA } from "@/data/courses";
 import { Course } from "@/types/course";
 
 // ─── Component Props ────────────────────────────────────────────────────────────
 
 export interface RelatedCoursesProps {
   currentCourse: Course;
+  courses: Course[];
   maxItems?: number;
 }
 
@@ -57,12 +57,10 @@ const cardVariants: Variants = {
 
 export default function RelatedCourses({
   currentCourse,
+  courses,
   maxItems = 4,
 }: RelatedCoursesProps) {
-  // Filter out the current course and take up to maxItems
-  const related = COURSES_DATA.filter(
-    (c) => c.id !== currentCourse.id
-  ).slice(0, maxItems);
+  const related = courses.filter((c) => c.id !== currentCourse.id).slice(0, maxItems);
 
   if (related.length === 0) return null;
 

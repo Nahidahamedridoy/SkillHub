@@ -13,6 +13,8 @@ import {
   LuCloud,
   LuMusic2,
 } from "react-icons/lu";
+import GradientText from "@/components/ui/GradientText";
+import SectionTitle from "@/components/ui/SectionTitle";
 import type { IconType } from "react-icons";
 
 // ─────────────────────────────────────────────
@@ -249,22 +251,20 @@ export default function Categories() {
           transition={{ duration: 0.6 }}
           className="mb-12 text-center"
         >
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-xs font-semibold text-primary">
-            <span className="h-1.5 w-1.5 animate-ping rounded-full bg-primary" />
-            Browse by Topic
-          </div>
-
-          <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-            Explore{" "}
-            <span className="bg-gradient-to-r from-primary to-violet-500 bg-clip-text text-transparent">
-              Top Categories
-            </span>
-          </h2>
-
-          <p className="mx-auto mt-3 max-w-xl text-sm text-foreground-500">
-            From coding to creativity — find your path across 30+ expertly
-            curated categories.
-          </p>
+          <SectionTitle
+            eyebrow={
+              <>
+                <span className="h-1.5 w-1.5 animate-ping rounded-full bg-primary" />
+                Browse by Topic
+              </>
+            }
+            title={
+              <>
+                Explore <h2 className="inline bg-gradient-to-r from-primary to-violet-500 bg-clip-text text-transparent">30+ Categories</h2>
+              </>
+            }
+            description="From coding to creativity — find your path across 30+ expertly curated categories."
+          />
         </motion.div>
 
         {/* Responsive 4-column grid (2 on mobile, 4 on md+) */}

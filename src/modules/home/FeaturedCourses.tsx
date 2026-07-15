@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
-import { Button } from "@heroui/react";
+import React, { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { LuArrowRight } from "react-icons/lu";
+import Link from "next/link";
 import CourseCard from "@/components/course/CourseCard";
-import { COURSES_DATA } from "@/data/courses";
-
+import EmptyState from "@/modules/courses/EmptyState";
+import LoadingSkeleton from "@/modules/courses/LoadingSkeleton";
+import { CourseService } from "@/services/CourseService";
+import type { Course } from "@/types/course";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -33,12 +35,50 @@ const cardVariants = {
 
 export default function FeaturedCourses() {
   const [activeFilter, setActiveFilter] = useState("All");
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const categories = ["All", "Development", "Design", "Data Science", "Business", "Marketing"];
 
-  const filteredCourses = activeFilter === "All"
-    ? COURSES_DATA
-    : COURSES_DATA.filter(course => course.category === activeFilter || (activeFilter === "Business" && course.category === "Finance"));
+  useEffect(() => {
+    let isMounted = true;
+    setIsLoading(true);
+    setError(null);
+
+    CourseService.getCourses()
+      .then((result) => {
+        if (!isMounted) return;
+        setCourses(result);
+      })
+      .catch(() => {
+        if (!isMounted) return;
+        setError("Unable to load courses. Please try again.");
+      })
+      .finally(() => {
+        if (!isMounted) return;
+        setIsLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const filteredCourses = useMemo(() => {
+    if (activeFilter === "All") {
+      return courses;
+    }
+
+    return courses.filter((course) => {
+      if (activeFilter === "Business") {
+        return course.category === "Business" || course.category === "Finance";
+      }
+      return course.category === activeFilter;
+    });
+  }, [activeFilter, courses]);
+
+  const hasResults = filteredCourses.length > 0;
 
   return (
     <section className="w-full bg-default-50/50 py-16 md:py-24">
@@ -58,13 +98,13 @@ export default function FeaturedCourses() {
               Discover programs designed by industry experts. Gain practical knowledge, work on live projects, and earn certifications.
             </p>
           </div>
-          <Button
-            variant="ghost"
-            className="group font-semibold text-primary hover:text-primary-600 self-start md:self-auto flex items-center gap-2 border-none"
+          <Link
+            href="/courses"
+            className="inline-flex items-center gap-2 font-semibold text-primary hover:text-primary-600 self-start md:self-auto transition-colors duration-200"
           >
             <span>View All Courses</span>
             <LuArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-          </Button>
+          </Link>
         </div>
 
         {/* Filter Tabs */}
@@ -75,7 +115,7 @@ export default function FeaturedCourses() {
               onClick={() => setActiveFilter(category)}
               className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${
                 activeFilter === category
-                  ? "bg-primary text-white shadow-md shadow-primary/25"
+                  ? "bg-primary text-sky-500 shadow-md shadow-primary/25"
                   : "bg-background border border-default-100 hover:border-default-250 text-foreground-600"
               }`}
             >
@@ -85,19 +125,33 @@ export default function FeaturedCourses() {
         </div>
 
         {/* Courses Grid */}
-        <motion.div
-          key={activeFilter}
-          variants={containerVariants}
-          initial="hidden"
-          animate="show"
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
-        >
-          {filteredCourses.map((course) => (
-            <motion.div key={course.id} variants={cardVariants}>
-              <CourseCard course={course} />
-            </motion.div>
-          ))}
-        </motion.div>
+        {isLoading ? (
+          <LoadingSkeleton />
+        ) : error ? (
+          <div className="rounded-3xl border border-danger/10 bg-danger/5 px-6 py-8 text-center text-sm font-semibold text-danger">
+            {error}
+          </div>
+        ) : hasResults ? (
+          <motion.div
+            key={activeFilter}
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+          >
+            {filteredCourses.map((course) => (
+              <motion.div key={course.id} variants={cardVariants}>
+                <CourseCard course={course} />
+              </motion.div>
+            ))}
+          </motion.div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-4">
+              <EmptyState onReset={() => setActiveFilter("All")} />
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

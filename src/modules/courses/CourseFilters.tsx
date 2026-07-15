@@ -41,11 +41,12 @@ export const DEFAULT_FILTERS: FilterState = {
 interface CourseFiltersProps {
   filters: FilterState;
   onChange: (next: FilterState) => void;
+  onSearch?: () => void;
 }
 
-// ─── Component ───────────────────────────────────────────────────────────────────
+// ─── Component ─────────────────────────────────────────────────────────────────
 
-export default function CourseFilters({ filters, onChange }: CourseFiltersProps) {
+export default function CourseFilters({ filters, onChange, onSearch }: CourseFiltersProps) {
   const { searchQuery, category, level, price, sortBy } = filters;
 
   const [showAdvanced, setShowAdvanced] = React.useState(false);
@@ -117,6 +118,12 @@ export default function CourseFilters({ filters, onChange }: CourseFiltersProps)
                   placeholder="Search courses by title, instructor, or keywords..."
                   value={searchQuery}
                   onChange={(e) => set({ searchQuery: e.target.value })}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      onSearch?.();
+                    }
+                  }}
                   className="flex-1 bg-transparent px-2 h-full text-sm outline-none border-none text-foreground placeholder:text-default-400"
                 />
                 {searchQuery && (
@@ -132,6 +139,16 @@ export default function CourseFilters({ filters, onChange }: CourseFiltersProps)
                     </Button>
                   </InputGroupSuffix>
                 )}
+                <InputGroupSuffix className="pr-3 flex items-center justify-center">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 px-3 rounded-lg font-semibold"
+                    onPress={onSearch}
+                  >
+                    Search
+                  </Button>
+                </InputGroupSuffix>
               </InputGroup>
             </div>
 

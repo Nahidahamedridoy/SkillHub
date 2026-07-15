@@ -5,9 +5,9 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Avatar, Button, Dropdown } from "@heroui/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { LuUser, LuSettings, LuLogOut } from "react-icons/lu";
+import { LuLayoutDashboard, LuUser, LuSettings, LuLogOut } from "react-icons/lu";
 
-import { useAuth } from "@/context/AuthContext";
+import { type AuthUser, type UserRole, useAuth } from "@/context/AuthContext";
 
 const Logo = () => (
   <div className="flex items-center gap-2.5 group">
@@ -65,10 +65,34 @@ interface UserMenuItem {
 }
 
 const userMenuItems: UserMenuItem[] = [
-  { id: "profile", label: "My Profile", href: "/profile", icon: <LuUser size={16} /> },
-  { id: "settings", label: "Settings", href: "/settings", icon: <LuSettings size={16} /> },
+  { id: "dashboard", label: "Dashboard", href: "/dashboard", icon: <LuLayoutDashboard size={16} /> },
+  { id: "profile", label: "My Profile", icon: <LuUser size={16} /> },
+  { id: "settings", label: "Settings", icon: <LuSettings size={16} /> },
   { id: "logout", label: "Logout", icon: <LuLogOut size={16} />, isDanger: true },
 ];
+
+const dashboardRedirects: Record<UserRole, string> = {
+  student: "/dashboard/student",
+  instructor: "/dashboard/instructor",
+  admin: "/dashboard/admin",
+};
+
+function resolveUserMenuHref(id: string, user: AuthUser | null) {
+  if (!user) return "/dashboard";
+
+  const base = dashboardRedirects[user.role] ?? "/dashboard";
+
+  if (id === "dashboard") return "/dashboard";
+  if (id === "profile") {
+    return user.role === "admin" ? base : `${base}/profile`;
+  }
+
+  if (id === "settings") {
+    return user.role === "admin" ? base : `${base}/settings`;
+  }
+
+  return "/dashboard";
+}
 
 // ─── UserMenu ─────────────────────────────────────────────────────────────────
 function UserMenu() {
@@ -80,8 +104,9 @@ function UserMenu() {
       logout();
       return;
     }
-    const item = userMenuItems.find((i) => i.id === id);
-    if (item?.href) router.push(item.href);
+
+    const href = resolveUserMenuHref(id, user);
+    router.push(href);
   };
 
   if (!user) return null;
@@ -174,13 +199,18 @@ export default function Navbar() {
     ? [
         { label: "Home", href: "/" },
         { label: "Courses", href: "/courses" },
+        { label: "Categories", href: "/categories" },
+        { label: "Instructors", href: "/instructors" },
         { label: "Dashboard", href: "/dashboard" },
+        { label: "Contact", href: "/contact" },
       ]
     : [
         { label: "Home", href: "/" },
         { label: "Courses", href: "/courses" },
+        { label: "Categories", href: "/categories" },
         { label: "Instructors", href: "/instructors" },
         { label: "About", href: "/about" },
+        { label: "Contact", href: "/contact" },
       ];
 
   return (
@@ -314,9 +344,9 @@ export default function Navbar() {
                         animate={{ x: 0, opacity: 1 }}
                         transition={{ delay: (navItems.length + index) * 0.05 }}
                       >
-                        {item.href ? (
+                        {item.id !== "logout" ? (
                           <Link
-                            href={item.href}
+                            href={resolveUserMenuHref(item.id, user)}
                             className={`flex items-center gap-3 py-2 text-base font-medium transition-colors ${
                               item.isDanger
                                 ? "text-danger hover:text-danger/80"

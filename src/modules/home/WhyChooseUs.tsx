@@ -10,6 +10,7 @@ import {
   LuBadgeCheck,
   LuHeadphones,
 } from "react-icons/lu";
+import GradientText from "@/components/ui/GradientText";
 
 const features = [
   {
@@ -116,10 +117,7 @@ export default function WhyChooseUs() {
             Why SkillHub
           </div>
           <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-            Everything you need to{" "}
-            <span className="bg-gradient-to-r from-primary to-violet-500 bg-clip-text text-transparent">
-              level up fast
-            </span>
+            Everything you need to <GradientText>level up fast</GradientText>
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-sm text-foreground-500 sm:text-base">
             We built SkillHub around one question: what makes people actually succeed at learning online? Here&apos;s our answer.
