@@ -28,13 +28,22 @@ function RoleCheck({
   const { user } = useAuth();
   const router = useRouter();
 
+  const roleRedirect = user
+    ? {
+        student: "/dashboard/student",
+        instructor: "/dashboard/instructor",
+        admin: "/dashboard/admin",
+      }[user.role]
+    : "/";
+
+  const redirectTarget = unauthorizedRedirectTo ?? roleRedirect;
   const hasRole = user ? allowedRoles.includes(user.role) : false;
 
   useEffect(() => {
     if (!hasRole) {
-      router.replace(unauthorizedRedirectTo ?? "/");
+      router.replace(redirectTarget);
     }
-  }, [hasRole, router, unauthorizedRedirectTo]);
+  }, [hasRole, router, redirectTarget]);
 
   if (!hasRole) {
     // Render nothing while redirect fires

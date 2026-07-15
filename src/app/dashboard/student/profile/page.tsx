@@ -1,12 +1,12 @@
 "use client";
 
+import RoleGuard from "@/components/auth/RoleGuard";
 import WelcomeCard from "@/components/dashboard/student/WelcomeCard";
-import StatsGrid from "@/components/dashboard/student/StatsGrid";
-import { statsData, welcomeData } from "@/data/dashboard/student";
+import { welcomeData } from "@/data/dashboard/student";
 
-export default function StudentDashboardPage() {
+export default function StudentProfilePage() {
   return (
-    <div className="space-y-6">
+    <RoleGuard allowedRoles={["student"]}>
       <WelcomeCard
         name={welcomeData.name}
         message={welcomeData.message}
@@ -14,8 +14,6 @@ export default function StudentDashboardPage() {
         points={welcomeData.points}
         streak={welcomeData.streak}
       />
-
-      <StatsGrid stats={statsData} />
-    </div>
+    </RoleGuard>
   );
 }

@@ -60,26 +60,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Check login on refresh only when a stored token exists
+  // Always hydrate the current session on mount.
+  // This supports both cookie-based sessions and token-based auth.
   useEffect(() => {
     const loadUser = async () => {
-      const token = typeof window !== "undefined"
-        ? localStorage.getItem(AUTH_TOKEN_KEY)
-        : null;
-
-      if (!token) {
-        setUser(null);
-        setIsLoading(false);
-        return;
-      }
-
       try {
         const { data } = await api.get("/auth/me");
 
         if (data.success) {
           setUser(mapUser(data.data));
+        } else {
+          setUser(null);
         }
       } catch {
+        if (typeof window !== "undefined") {
+          localStorage.removeItem(AUTH_TOKEN_KEY);
+        }
         setUser(null);
       } finally {
         setIsLoading(false);
