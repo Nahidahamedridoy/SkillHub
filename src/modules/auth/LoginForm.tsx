@@ -86,7 +86,7 @@ export default function LoginForm() {
       
       // Redirect to dashboard after a successful simulation delay
       setTimeout(() => {
-        router.push("/dashboard");
+        router.push("/");
       }, 800);
     } catch (err: unknown) {
       setIsSubmitting(false);
