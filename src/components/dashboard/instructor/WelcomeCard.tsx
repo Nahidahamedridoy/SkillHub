@@ -1,8 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader, Chip, Typography as Text } from "@heroui/react";
-import { LuSparkles, LuTrendingUp } from "react-icons/lu";
+import { Card, CardHeader, Chip, Typography as Text } from "@heroui/react";
+import { LuTrendingUp } from "react-icons/lu";
 
 type WelcomeCardProps = {
   name: string;
