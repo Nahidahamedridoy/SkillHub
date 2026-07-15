@@ -8,18 +8,17 @@ Built with **Next.js, TypeScript, Express.js, MongoDB, JWT Authentication, and T
 
 ## 🌐 Live Demo
 
-- **Frontend:** https://your-frontend.vercel.app
-- **Backend:** https://your-backend.onrender.com
+- **Frontend:** https://skillhub-snowy-one.vercel.app
 
 ---
 
 ## 📂 GitHub Repository
 
 ### Frontend
-https://github.com/your-username/skillhub-client
+https://github.com/Nahidahamedridoy/SkillHub
 
 ### Backend
-https://github.com/your-username/skillhub-server
+https://github.com/Nahidahamedridoy/skillHub_server
 
 ---
 

@@ -54,14 +54,12 @@ function mapUser(raw: RawUser): AuthUser {
   };
 }
 
-const AUTH_TOKEN_KEY = "skillhub_auth_token";
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   // Always hydrate the current session on mount.
-  // This supports both cookie-based sessions and token-based auth.
+  // This supports secure cookie-based session management.
   useEffect(() => {
     const loadUser = async () => {
       try {
@@ -73,9 +71,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setUser(null);
         }
       } catch {
-        if (typeof window !== "undefined") {
-          localStorage.removeItem(AUTH_TOKEN_KEY);
-        }
         setUser(null);
       } finally {
         setIsLoading(false);
@@ -100,12 +95,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     if (data.success) {
-      const token =
-        data.data?.token || data.data?.accessToken || data.token || data.accessToken;
-      if (typeof window !== "undefined" && token) {
-        localStorage.setItem(AUTH_TOKEN_KEY, token);
-      }
-
       setUser(mapUser(data.data));
     }
   };
@@ -118,12 +107,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     if (data.success) {
-      const token =
-        data.data?.token || data.data?.accessToken || data.token || data.accessToken;
-      if (typeof window !== "undefined" && token) {
-        localStorage.setItem(AUTH_TOKEN_KEY, token);
-      }
-
       setUser(mapUser(data.data));
     }
   };
@@ -134,9 +117,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await api.post("/auth/logout");
     } catch { }
 
-    if (typeof window !== "undefined") {
-      localStorage.removeItem(AUTH_TOKEN_KEY);
-    }
     setUser(null);
   };
 
