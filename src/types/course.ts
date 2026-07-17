@@ -56,6 +56,8 @@ export interface Course {
   duration: string;
   /** Admin-controlled review status. Defaults to 'approved' for seeded data. */
   status?: "pending" | "approved" | "rejected";
+  /** MongoDB ObjectId string of the instructor who created this course. */
+  instructorId?: string;
 
   // ── Detail-view extended fields ──
   description?: string;                  // short one-liner for banner

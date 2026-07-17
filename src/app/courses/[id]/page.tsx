@@ -21,8 +21,8 @@ export default async function CourseDetailsPage({
   params,
 }: PageProps) {
   const { id } = await params;
+  const course = await CourseService.getCourseById(id);
   const courses = await CourseService.getCourses();
-  const course = courses.find((item) => item.id === id);
 
   if (!course) {
     notFound();

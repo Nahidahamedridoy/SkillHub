@@ -79,32 +79,7 @@ export const instructorStats: InstructorStatsItem[] = [
   },
 ];
 
-export const myCourses: InstructorCourse[] = [
-  {
-    title: "Mastering Product Design",
-    category: "Design",
-    students: 820,
-    rating: 4.9,
-    earnings: "$7,800",
-    status: "Live",
-  },
-  {
-    title: "Advanced TypeScript Patterns",
-    category: "Development",
-    students: 1_350,
-    rating: 4.8,
-    earnings: "$9,300",
-    status: "Live",
-  },
-  {
-    title: "Growth Marketing Fundamentals",
-    category: "Marketing",
-    students: 620,
-    rating: 4.7,
-    earnings: "$5,400",
-    status: "Live",
-  },
-];
+export const myCourses: InstructorCourse[] = [];
 
 export const recentStudents: InstructorStudent[] = [
   {

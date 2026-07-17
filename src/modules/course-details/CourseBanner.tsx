@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button, Chip } from "@heroui/react";
 import { motion, Variants } from "framer-motion";
 import {
@@ -17,8 +18,49 @@ import {
   LuPlay,
   LuAward,
   LuSparkles,
+  LuCircleCheck,
+  LuLoader,
 } from "react-icons/lu";
 import { Course } from "@/types/course";
+import { useAuth } from "@/context/AuthContext";
+import { EnrollmentService } from "@/services/EnrollmentService";
+
+// ─── Toast ────────────────────────────────────────────────────────────────────
+
+function Toast({
+  message,
+  type,
+  onDone,
+}: {
+  message: string;
+  type: "success" | "error";
+  onDone: () => void;
+}) {
+  useEffect(() => {
+    const t = setTimeout(onDone, 3500);
+    return () => clearTimeout(t);
+  }, [onDone]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -20, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: -20, scale: 0.95 }}
+      className={`fixed top-6 right-6 z-[9999] flex items-center gap-3 rounded-2xl px-5 py-3.5 shadow-2xl backdrop-blur-md border text-sm font-semibold ${
+        type === "success"
+          ? "bg-emerald-500/90 border-emerald-400/30 text-white"
+          : "bg-rose-500/90 border-rose-400/30 text-white"
+      }`}
+    >
+      {type === "success" ? (
+        <LuCircleCheck className="w-4.5 h-4.5 shrink-0" />
+      ) : (
+        <span className="w-4.5 h-4.5 shrink-0 text-lg leading-none">✕</span>
+      )}
+      {message}
+    </motion.div>
+  );
+}
 
 // ─── Component Props ────────────────────────────────────────────────────────────
 
@@ -68,16 +110,72 @@ const floatBlob: Variants = {
 // ─── Component ───────────────────────────────────────────────────────────────────
 
 export default function CourseBanner({ course }: CourseBannerProps) {
+  const { user, isLoading: authLoading } = useAuth();
+  const router = useRouter();
+
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isEnrolled, setIsEnrolled] = useState(false);
+  const [enrolling, setEnrolling] = useState(false);
+  const [checkingEnrollment, setCheckingEnrollment] = useState(false);
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
 
-  // Resolve instructor display — prefer rich instructorDetails, fall back to string
+  const isAdmin = user?.role === "admin";
+  const isOwnCourse =
+    user && course.instructorId
+      ? String(course.instructorId) === user.id
+      : false;
+
+  // ── Check existing enrollment on mount ──────────────────────────────────────
+  useEffect(() => {
+    if (!user || authLoading || isAdmin || isOwnCourse) return;
+
+    setCheckingEnrollment(true);
+    EnrollmentService.isEnrolled(course.id)
+      .then((enrolled) => setIsEnrolled(enrolled))
+      .finally(() => setCheckingEnrollment(false));
+  }, [user, authLoading, course.id, isAdmin, isOwnCourse]);
+
+  // ── Enroll handler ──────────────────────────────────────────────────────────
+  const handleEnroll = useCallback(async () => {
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+
+    if (isAdmin) return;
+    if (isOwnCourse) {
+      setToast({ message: "You cannot enroll in your own course.", type: "error" });
+      return;
+    }
+    if (isEnrolled) {
+      router.push("/dashboard/student/my-courses");
+      return;
+    }
+
+    setEnrolling(true);
+    try {
+      await EnrollmentService.enroll(course.id);
+      setIsEnrolled(true);
+      setToast({ message: "🎉 Enrolled successfully! Happy learning.", type: "success" });
+    } catch (err: any) {
+      setToast({
+        message: err?.message ?? "Enrollment failed. Please try again.",
+        type: "error",
+      });
+    } finally {
+      setEnrolling(false);
+    }
+  }, [user, isAdmin, isOwnCourse, isEnrolled, course.id, router]);
+
+  // ── Resolve instructor display ───────────────────────────────────────────────
   const instructorName = course.instructorDetails?.name ?? course.instructor;
   const instructorTitle = course.instructorDetails?.title;
   const instructorAvatar = course.instructorDetails?.avatar;
 
-  // ── Helpers ─────────────────────────────────────────────────────────────────
-
+  // ── Helpers ──────────────────────────────────────────────────────────────────
   const renderStars = (rating: number) => {
     const stars = [];
     const floor = Math.floor(rating);
@@ -114,8 +212,37 @@ export default function CourseBanner({ course }: CourseBannerProps) {
 
   const discountPercent = calculateDiscount(course.price, course.originalPrice);
 
+  // ── Button state ─────────────────────────────────────────────────────────────
+  const buttonDisabled = enrolling || checkingEnrollment || isAdmin || isOwnCourse;
+
+  const buttonLabel = (() => {
+    if (isAdmin) return "Admins cannot enroll";
+    if (isOwnCourse) return "Your own course";
+    if (checkingEnrollment) return "Checking...";
+    if (enrolling) return "Enrolling...";
+    if (isEnrolled) return "Go to My Learning →";
+    return "Enroll Now";
+  })();
+
+  const buttonClass = (() => {
+    if (isAdmin || isOwnCourse)
+      return "w-full font-bold h-12 rounded-xl bg-default-200/40 text-foreground-400 cursor-not-allowed";
+    if (isEnrolled)
+      return "w-full font-bold h-12 rounded-xl bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-colors";
+    return "w-full font-bold h-12 rounded-xl bg-gradient-to-r from-primary to-secondary text-white shadow-lg shadow-primary/15 hover:shadow-primary/25 hover:scale-[1.01] active:scale-[0.99] transition-all duration-200";
+  })();
+
   return (
     <section className="relative w-full overflow-hidden bg-[#0A0E1A] text-white py-12 lg:py-16 border-b border-default-100/10">
+      {/* Toast */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onDone={() => setToast(null)}
+        />
+      )}
+
       {/* ── Background Glow Effects ── */}
       <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
         <motion.div
@@ -208,9 +335,7 @@ export default function CourseBanner({ course }: CourseBannerProps) {
               {/* Rating */}
               <div className="flex items-center gap-1.5">
                 <span className="text-amber-400 font-bold text-base">{course.rating}</span>
-                <div className="flex items-center">
-                  {renderStars(course.rating)}
-                </div>
+                <div className="flex items-center">{renderStars(course.rating)}</div>
                 <span className="text-foreground-400 text-xs">
                   ({course.reviewsCount.toLocaleString()} reviews)
                 </span>
@@ -336,17 +461,36 @@ export default function CourseBanner({ course }: CourseBannerProps) {
                   )}
                 </div>
 
+                {/* Admin notice */}
+                {isAdmin && (
+                  <div className="rounded-xl bg-rose-500/10 border border-rose-500/20 px-4 py-3 text-sm font-semibold text-rose-400 text-center">
+                    Admins cannot enroll in courses.
+                  </div>
+                )}
+
+                {/* Own course notice */}
+                {!isAdmin && isOwnCourse && (
+                  <div className="rounded-xl bg-amber-500/10 border border-amber-500/20 px-4 py-3 text-sm font-semibold text-amber-400 text-center">
+                    You cannot enroll in your own course.
+                  </div>
+                )}
+
                 {/* Actions Button Group */}
                 <div className="flex flex-col gap-3">
                   <Button
-                    onPress={() => setIsEnrolled(!isEnrolled)}
-                    className={`w-full font-bold h-12 rounded-xl transition-all duration-200 ${
-                      isEnrolled
-                        ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/15"
-                        : "bg-gradient-to-r from-primary to-secondary text-white shadow-lg shadow-primary/15 hover:shadow-primary/25 hover:scale-[1.01] active:scale-[0.99]"
-                    }`}
+                    id="enroll-btn"
+                    onPress={handleEnroll}
+                    isDisabled={buttonDisabled && !isEnrolled}
+                    className={buttonClass}
                   >
-                    {isEnrolled ? "Already Enrolled (Go to Portal)" : "Enroll Now"}
+                    {enrolling || checkingEnrollment ? (
+                      <span className="flex items-center gap-2">
+                        <LuLoader className="w-4 h-4 animate-spin" />
+                        {buttonLabel}
+                      </span>
+                    ) : (
+                      buttonLabel
+                    )}
                   </Button>
 
                   <div className="flex gap-2">
