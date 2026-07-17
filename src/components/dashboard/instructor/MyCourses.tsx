@@ -33,7 +33,11 @@ export default function MyCourses({ courses, onDeleteCourse }: MyCoursesProps) {
             <p className="mt-2 text-sm text-slate-600">Track your course performance and student reach at a glance.</p>
           </div>
           <Link href="/dashboard/instructor/create-course">
-            <Button color="primary" startContent={<LuPlus />} className="mt-4 sm:mt-0 font-medium">
+            <Button
+              variant="primary"
+              className="mt-4 sm:mt-0 font-medium flex items-center gap-2"
+            >
+              <LuPlus />
               Create Course
             </Button>
           </Link>
@@ -59,15 +63,14 @@ export default function MyCourses({ courses, onDeleteCourse }: MyCoursesProps) {
                       </Badge>
                       <div className="flex items-center gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                         <Link href={`/dashboard/instructor/courses/${course.id}/edit`}>
-                          <Button isIconOnly size="sm" variant="flat" color="primary" aria-label="Edit course">
+                          <Button isIconOnly size="sm" variant="ghost" aria-label="Edit course">
                             <LuPencil className="h-4 w-4" />
                           </Button>
                         </Link>
                         <Button
                           isIconOnly
                           size="sm"
-                          variant="flat"
-                          color="danger"
+                          variant="ghost"
                           aria-label="Delete course"
                           onPress={() => handleDelete(course.id)}
                         >

@@ -47,7 +47,7 @@ export default function InstructorEditCoursePage({ params }: { params: Promise<{
       >
         {loading ? (
           <div className="flex h-[400px] items-center justify-center">
-            <Spinner size="lg" color="primary" />
+            <Spinner size="lg" color="success" />
           </div>
         ) : course ? (
           <CourseForm initialData={course} isEdit />

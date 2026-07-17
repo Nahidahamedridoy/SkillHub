@@ -33,7 +33,7 @@ export default function InstructorCoursesPage() {
     <RoleGuard allowedRoles={["instructor", "admin"]}>
       {loading ? (
         <div className="flex h-[400px] items-center justify-center">
-          <Spinner size="lg" color="primary" />
+          <Spinner size="lg" color="success" />
         </div>
       ) : (
         <MyCourses courses={courses} onDeleteCourse={handleDeleteCourse} />
