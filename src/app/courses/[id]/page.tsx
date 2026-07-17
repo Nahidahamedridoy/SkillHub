@@ -21,8 +21,11 @@ export default async function CourseDetailsPage({
   params,
 }: PageProps) {
   const { id } = await params;
+
   const course = await CourseService.getCourseById(id);
-  const courses = await CourseService.getCourses();
+
+  // get all courses
+  const response = await CourseService.getCourses();
 
   if (!course) {
     notFound();
@@ -31,18 +34,33 @@ export default async function CourseDetailsPage({
   return (
     <main className="min-h-screen bg-background">
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Courses", href: "/courses" }, { label: course.title }]} />
-        <BackButton href="/courses" label="Back to Courses" />
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Courses", href: "/courses" },
+            { label: course.title },
+          ]}
+        />
+
+        <BackButton
+          href="/courses"
+          label="Back to Courses"
+        />
       </div>
 
       <CourseBanner course={course} />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">        <CourseOverview course={course} />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <CourseOverview course={course} />
         <WhatYouWillLearn course={course} />
         <CourseCurriculum course={course} />
         <InstructorCard course={course} />
         <CourseReviews course={course} />
-        <RelatedCourses currentCourse={course} courses={courses} />
+
+        <RelatedCourses
+          currentCourse={course}
+          courses={response.data}
+        />
       </div>
     </main>
   );

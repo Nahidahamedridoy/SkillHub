@@ -46,11 +46,10 @@ function Toast({
       initial={{ opacity: 0, y: -20, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -20, scale: 0.95 }}
-      className={`fixed top-6 right-6 z-[9999] flex items-center gap-3 rounded-2xl px-5 py-3.5 shadow-2xl backdrop-blur-md border text-sm font-semibold ${
-        type === "success"
-          ? "bg-emerald-500/90 border-emerald-400/30 text-white"
-          : "bg-rose-500/90 border-rose-400/30 text-white"
-      }`}
+      className={`fixed top-6 right-6 z-[9999] flex items-center gap-3 rounded-2xl px-5 py-3.5 shadow-2xl backdrop-blur-md border text-sm font-semibold ${type === "success"
+        ? "bg-emerald-500/90 border-emerald-400/30 text-white"
+        : "bg-rose-500/90 border-rose-400/30 text-white"
+        }`}
     >
       {type === "success" ? (
         <LuCircleCheck className="w-4.5 h-4.5 shrink-0" />
@@ -123,6 +122,8 @@ export default function CourseBanner({ course }: CourseBannerProps) {
   } | null>(null);
 
   const isAdmin = user?.role === "admin";
+  const isInstructor = user?.role === "instructor";
+
   const isOwnCourse =
     user && course.instructorId
       ? String(course.instructorId) === user.id
@@ -145,7 +146,22 @@ export default function CourseBanner({ course }: CourseBannerProps) {
       return;
     }
 
-    if (isAdmin) return;
+    if (isInstructor) {
+      setToast({
+        message: "Only students can enroll in courses.",
+        type: "error",
+      });
+      return;
+    }
+
+    if (isAdmin) {
+      setToast({
+        message: "Admins cannot enroll in courses.",
+        type: "error",
+      });
+      return;
+    }
+
     if (isOwnCourse) {
       setToast({ message: "You cannot enroll in your own course.", type: "error" });
       return;
@@ -213,9 +229,15 @@ export default function CourseBanner({ course }: CourseBannerProps) {
   const discountPercent = calculateDiscount(course.price, course.originalPrice);
 
   // ── Button state ─────────────────────────────────────────────────────────────
-  const buttonDisabled = enrolling || checkingEnrollment || isAdmin || isOwnCourse;
+  const buttonDisabled =
+    enrolling ||
+    checkingEnrollment ||
+    isAdmin ||
+    isInstructor ||
+    isOwnCourse;
 
   const buttonLabel = (() => {
+    if (isInstructor) return "Instructors cannot enroll";
     if (isAdmin) return "Admins cannot enroll";
     if (isOwnCourse) return "Your own course";
     if (checkingEnrollment) return "Checking...";
@@ -468,6 +490,12 @@ export default function CourseBanner({ course }: CourseBannerProps) {
                   </div>
                 )}
 
+                {isInstructor && (
+                  <div className="rounded-xl bg-amber-500/10 border border-amber-500/20 px-4 py-3 text-sm font-semibold text-amber-400 text-center">
+                    Instructors cannot enroll in courses.
+                  </div>
+                )}
+
                 {/* Own course notice */}
                 {!isAdmin && isOwnCourse && (
                   <div className="rounded-xl bg-amber-500/10 border border-amber-500/20 px-4 py-3 text-sm font-semibold text-amber-400 text-center">
@@ -497,15 +525,13 @@ export default function CourseBanner({ course }: CourseBannerProps) {
                     <Button
                       variant="outline"
                       onPress={() => setIsWishlisted(!isWishlisted)}
-                      className={`flex-1 font-bold h-12 rounded-xl border-default-200 hover:border-primary transition-all ${
-                        isWishlisted
-                          ? "text-rose-500 border-rose-500/50 bg-rose-500/5 hover:bg-rose-500/10 hover:border-rose-500"
-                          : "text-foreground-300 hover:text-white"
-                      }`}
+                      className={`flex-1 font-bold h-12 rounded-xl border-default-200 hover:border-primary transition-all ${isWishlisted
+                        ? "text-rose-500 border-rose-500/50 bg-rose-500/5 hover:bg-rose-500/10 hover:border-rose-500"
+                        : "text-foreground-300 hover:text-white"
+                        }`}
                     >
-                      <LuHeart className={`w-4.5 h-4.5 transition-transform duration-200 ${
-                        isWishlisted ? "fill-rose-500 scale-110" : ""
-                      }`} />
+                      <LuHeart className={`w-4.5 h-4.5 transition-transform duration-200 ${isWishlisted ? "fill-rose-500 scale-110" : ""
+                        }`} />
                       <span>{isWishlisted ? "Wishlisted" : "Add to Wishlist"}</span>
                     </Button>
 
