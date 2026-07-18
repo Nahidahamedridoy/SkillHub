@@ -141,6 +141,7 @@ export default function CourseBanner({ course }: CourseBannerProps) {
 
   // ── Enroll handler ──────────────────────────────────────────────────────────
   const handleEnroll = useCallback(async () => {
+    console.log("Enroll button clicked" , user);
     if (!user) {
       router.push("/login");
       return;
